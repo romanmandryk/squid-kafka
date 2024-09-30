@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 const USDC_CONTRACT_ADDRESS = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-const KAFKA_TOPIC = 'decoded-data'
+const KAFKA_TOPIC = 'decoded-data2'
 const processor = new EvmBatchProcessor()
   // SQD Network gateways are the primary source of blockchain data in
   // squids, providing pre-filtered data in chunks of roughly 1-10k blocks.

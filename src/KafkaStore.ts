@@ -3,7 +3,11 @@ import { Entity, EntityClass, FindManyOptions, FindOneOptions } from '@subsquid/
 import { Producer } from 'kafka-node'
 import { FindOptionsWhere, EntityTarget } from 'typeorm'
 
-
+function stringifyWithBigInt(obj: any): string {
+    return JSON.stringify(obj, (_, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    );
+  }
 export class KafkaStore {
   private kafkaProducer: Producer
   private kafkaTopic: string
@@ -12,24 +16,15 @@ export class KafkaStore {
     this.kafkaProducer = producer
     this.kafkaTopic = topic
   }
-  
-  private stringifyWithBigInt(obj: any): string {
-    return JSON.stringify(obj, (_, value) =>
-      typeof value === 'bigint' ? value.toString() : value
-    );
-  }
 
   async save<E extends Entity>(entityOrEntities: E | E[]): Promise<void> {
     const items = Array.isArray(entityOrEntities) ? entityOrEntities : [entityOrEntities];
     // Send the data to Kafka
-    const messages = items.map(item => ({
-      key: item.id,
-      value: this.stringifyWithBigInt(item)
-    }))
+    const messages = stringifyWithBigInt(items)
     
     return new Promise((resolve, reject) => {
         this.kafkaProducer.send([{
-            topic: this.kafkaTopic,
+            topic: this.kafkaTopic,            
             messages
           }], (err, data) => {
           if (err) reject(err)
