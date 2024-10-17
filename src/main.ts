@@ -53,7 +53,6 @@ const db = new KafkaWithTypORMDatabase({
   supportHotBlocks: true
 })
 processor.run(db, async (ctx) => {
-  console.log("processor.run")
   for (let block of ctx.blocks) {
     // On EVM, each block has four iterables - logs, transactions, traces,
     // stateDiffs
